@@ -1,0 +1,20 @@
+{
+    "version": "1.0",
+
+    "title": "recodering.html", 
+    "description": "",  
+
+    "width" : "641", 
+    "height": "340", 
+
+    "events": {
+        "enabled": 1, 
+        "list": { }
+    },
+
+    "clicktags": {
+        "clickTAG": "http://www.adform.com"
+    },
+
+    "source": "recodering.html"
+}
