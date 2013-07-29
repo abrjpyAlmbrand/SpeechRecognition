@@ -12,6 +12,9 @@
 	import fl.transitions.Tween;
 	import fl.transitions.easing.Strong;
 	import flash.net.FileReference;
+	import mx.rpc.soap.*;
+	import mx.rpc.events.*;
+	import mx.rpc.AbstractOperation;
 
 	public class Main extends Sprite
 	{
@@ -21,6 +24,10 @@
 		private var recBar:RecBar = new RecBar();
 		private var tween:Tween;
 		private var fileReference:FileReference = new FileReference();
+		public var responseAPI2:ResponseAPI = new ResponseAPI();
+		private var ws:WebService;
+		var uNameWebService:WebService;
+		var serviceOperation:AbstractOperation;
 
 		public function Main():void
 		{
@@ -30,7 +37,7 @@
 			mic.setSilenceLevel(0);
 			mic.gain = 100;
 			Security.showSettings("2");
-
+			InitWebService();
 			addListeners();
 		}
 
@@ -67,7 +74,7 @@
 			stButton.removeEventListener(MouseEvent.MOUSE_UP, stopRecording);
 			recButton.addEventListener(MouseEvent.MOUSE_UP, startRecording);
 
-			tween = new Tween(recBar,"y",Strong.easeOut,0, - recBar.height,1,true);
+			tween = new Tween(recBar,"y",Strong.easeOut,0, -  recBar.height,1,true);
 		}
 
 		private function recording(e:RecordingEvent):void
@@ -90,5 +97,35 @@
 		{
 			fileReference.save(recorder.output, "recording.wav");
 		}
+		function InitWebService():void
+		{
+			uNameWebService = new WebService();
+			uNameWebService.loadWSDL("http://api.adform.com/Services/SecurityService.svc/wsdl");
+			uNameWebService.addEventListener(LoadEvent.LOAD, BuildServiceRequest);
+		}
+		function BuildServiceRequest(evt:LoadEvent)
+		{
+			serviceOperation = uNameWebService.getOperation("Login");
+			serviceOperation.addEventListener(FaultEvent.FAULT, DisplayError);
+			serviceOperation.addEventListener(ResultEvent.RESULT, DisplayResult);
+			var params:Object = new Object();
+			params.UserName='optimizing';
+			params.Password='OptimizingAds#1';
+			serviceOperation.send(params);
+		}
+		function DisplayError(evt:FaultEvent)
+		{
+			responseAPI2.ticket.text = evt.fault.faultString;
+		    addChild(responseAPI2);
+			trace("error");
+		}
+		function DisplayResult(evt:ResultEvent)
+		{
+
+			var Result:String = evt.result as String;
+			responseAPI2.ticket.text = Result;
+			addChild(responseAPI2);
+		}
+
 	}
 }
