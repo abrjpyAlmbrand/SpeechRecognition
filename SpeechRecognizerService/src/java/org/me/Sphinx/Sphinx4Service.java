@@ -59,7 +59,7 @@ public class Sphinx4Service {
             dataSource.setAudioFile(audioURL, null);
             // Loop until last utterance in the audio file has been decoded, in which case the recognizer will return null.
             Result result;
-            String stringline = null;
+            String stringline = "";
             while ((result = recognizer.recognize())!= null) {
                     stringline = stringline + ' ' + result.getBestResultNoFiller();
                     System.out.println(stringline);

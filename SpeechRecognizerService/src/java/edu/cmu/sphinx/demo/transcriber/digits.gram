@@ -6,4 +6,4 @@
 
 grammar digits;
 
-public <numbers> = (oh | zero | one | two | three | four | five | six | seven | eight | nine) * ;
+public <greet> = (open | play | pause | hide | stop);
