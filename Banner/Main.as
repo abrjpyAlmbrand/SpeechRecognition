@@ -124,7 +124,7 @@ package
 			serviceOperation.addEventListener(ResultEvent.RESULT, DisplayResult);
 			var byteArray:ByteArray = new ByteArray();
 			//change
-			var swfFile:File = File.applicationDirectory.resolvePath("C:/Users/Kimia/Desktop/commands.wav");
+			var swfFile:File = File.applicationDirectory.resolvePath("C:/Users/Studentas/Desktop/commands.wav");
 			//-----
 			
 			var stream:FileStream = new FileStream();
