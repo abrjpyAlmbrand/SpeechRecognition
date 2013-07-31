@@ -1,5 +1,7 @@
-﻿package 
+﻿
+package 
 {
+	//Security.allowDomain("*");
 	import flash.display.Sprite;
 	import flash.media.Microphone;
 	import flash.system.Security;
@@ -15,6 +17,10 @@
 	import mx.rpc.soap.*;
 	import mx.rpc.events.*;
 	import mx.rpc.AbstractOperation;
+	import flash.filesystem.*;
+	import flash.net.*;
+	import flash.utils.*;
+
 
 	public class Main extends Sprite
 	{
@@ -24,6 +30,8 @@
 		private var recBar:RecBar = new RecBar();
 		private var tween:Tween;
 		private var fileReference:FileReference = new FileReference();
+		private var fileReference2:FileReference = new FileReference();
+		var loadStream:FileStream = new FileStream();
 		public var responseAPI2:ResponseAPI = new ResponseAPI();
 		private var ws:WebService;
 		var uNameWebService:WebService;
@@ -39,6 +47,7 @@
 			Security.showSettings("2");
 			InitWebService();
 			addListeners();
+
 		}
 
 		private function addListeners():void
@@ -95,35 +104,54 @@
 
 		private function recordComplete(e:Event):void
 		{
-			fileReference.save(recorder.output, "recording.wav");
+			//fileReference.save(recorder.output, "recording.wav");
+
+
+
 		}
 		function InitWebService():void
 		{
 			uNameWebService = new WebService();
-			uNameWebService.loadWSDL("http://api.adform.com/Services/SecurityService.svc/wsdl");
+			//change
+			uNameWebService.loadWSDL("http://localhost:8080/SpeechRecognizerService/Sphinx4Service?WSDL");
+			//-------
 			uNameWebService.addEventListener(LoadEvent.LOAD, BuildServiceRequest);
 		}
 		function BuildServiceRequest(evt:LoadEvent)
 		{
-			serviceOperation = uNameWebService.getOperation("Login");
+			serviceOperation = uNameWebService.getOperation("GetStringFromAudio2");
 			serviceOperation.addEventListener(FaultEvent.FAULT, DisplayError);
 			serviceOperation.addEventListener(ResultEvent.RESULT, DisplayResult);
-			var params:Object = new Object();
-			params.UserName='optimizing';
-			params.Password='OptimizingAds#1';
-			serviceOperation.send(params);
+			var byteArray:ByteArray = new ByteArray();
+			//change
+			var swfFile:File = File.applicationDirectory.resolvePath("C:/Users/Kimia/Desktop/commands.wav");
+			//-----
+			
+			var stream:FileStream = new FileStream();
+			stream.open(swfFile, FileMode.READ);
+			stream.readBytes(byteArray);
+			stream.close();
+			serviceOperation.send(byteArray);
 		}
+
 		function DisplayError(evt:FaultEvent)
 		{
 			responseAPI2.ticket.text = evt.fault.faultString;
-		    addChild(responseAPI2);
+			addChild(responseAPI2);
 			trace("error");
 		}
 		function DisplayResult(evt:ResultEvent)
 		{
 
 			var Result:String = evt.result as String;
-			responseAPI2.ticket.text = Result;
+			if (Result != null)
+			{
+				responseAPI2.ticket.text = Result;
+			}
+			else
+			{
+				responseAPI2.ticket.text = "null";
+			}
 			addChild(responseAPI2);
 		}
 

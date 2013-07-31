@@ -13,11 +13,17 @@ import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
 import java.net.URL;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Studentas
@@ -31,7 +37,7 @@ public class Sphinx4Service {
     @WebMethod(operationName = "GetStringFromAudio")
     public String GetStringFromAudio() {
         String Text;
-        Transcriber newMethod = new Transcriber();
+        Sphinx4Service.Transcriber newMethod = new Sphinx4Service.Transcriber();
         try
         {
             Text = newMethod.Recognise();
@@ -71,18 +77,25 @@ public class Sphinx4Service {
      * Get string type text from Audio file (Audio file transmit through parameters)
      -----------------------------------------------------------------------*/
     @WebMethod(operationName = "GetStringFromAudio2")
-    public String GetStringFromAudio2(@WebParam(name = "AudioFile") File AudioFile) {
-        String Text;
-        Transcriber2 newMethod = new Transcriber2();
-        try
+    public String GetStringFromAudio2(@WebParam(name = "AudioFile") byte[] AudioFile) {
+       String Text;
+        Sphinx4Service.Transcriber2 newMethod = new Sphinx4Service.Transcriber2();
+        if (AudioFile!=null)
         {
-            Text = newMethod.Recognise(AudioFile);
+            File filas = frombytes(AudioFile) ;
+               try
+        {
+            Text = newMethod.Recognise(filas);
         }
         catch(Exception e)
         {
-            return null;
+           Text=e.toString();
         }
-        return Text;
+            
+          return Text;
+        }
+        else
+          return "null";
     }
     
     public class Transcriber2 {
@@ -107,5 +120,23 @@ public class Sphinx4Service {
             }
             return stringline;
         }
+    }
+    
+    public File frombytes(byte[] bytesarray)       
+    {
+        File someFile = new File("name.wav");
+        try
+        {
+        FileOutputStream fos = new FileOutputStream(someFile);
+        fos.write(bytesarray);
+        
+        }
+        
+        catch(Exception e)
+                {
+                }
+        
+        return someFile;
+    
     }
 }
