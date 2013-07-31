@@ -6,4 +6,4 @@
 
 grammar digits;
 
-public <greet> = (open | play | pause | hide | stop);
+public <greet> = (open | play | pause | hide | stop | close | resume);
