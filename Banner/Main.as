@@ -45,7 +45,6 @@ package
 			mic.setSilenceLevel(0);
 			mic.gain = 100;
 			Security.showSettings("2");
-			InitWebService();
 			addListeners();
 
 		}
@@ -104,9 +103,7 @@ package
 
 		private function recordComplete(e:Event):void
 		{
-			//fileReference.save(recorder.output, "recording.wav");
-
-
+			InitWebService();
 
 		}
 		function InitWebService():void
@@ -122,16 +119,7 @@ package
 			serviceOperation = uNameWebService.getOperation("GetStringFromAudio2");
 			serviceOperation.addEventListener(FaultEvent.FAULT, DisplayError);
 			serviceOperation.addEventListener(ResultEvent.RESULT, DisplayResult);
-			var byteArray:ByteArray = new ByteArray();
-			//change
-			var swfFile:File = File.applicationDirectory.resolvePath("C:/Users/Studentas/Desktop/commands.wav");
-			//-----
-			
-			var stream:FileStream = new FileStream();
-			stream.open(swfFile, FileMode.READ);
-			stream.readBytes(byteArray);
-			stream.close();
-			serviceOperation.send(byteArray);
+			serviceOperation.send(recorder.output);
 		}
 
 		function DisplayError(evt:FaultEvent)
