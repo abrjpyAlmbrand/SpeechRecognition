@@ -33,7 +33,7 @@ public class Sphinx4Service {
     @WebMethod(operationName = "GetStringFromAudio")
     public String GetStringFromAudio() {
         String Text;
-        File AudioFile = new File("C:\\Users\\Studentas\\Desktop\\commands.wav");
+        File AudioFile = new File("C:\\Users\\Studentas\\Desktop\\pause.wav");
         Sphinx4Service.Transcriber newMethod = new Sphinx4Service.Transcriber();
         try
         {
