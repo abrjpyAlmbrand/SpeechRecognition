@@ -2,14 +2,12 @@
 {
 	import flash.display.Sprite;
 	import flash.media.Microphone;
-	import flash.media.SoundTransform;
 	import flash.system.Security;
 	import org.bytearray.micrecorder.*;
 	import org.bytearray.micrecorder.events.RecordingEvent;
 	import org.bytearray.micrecorder.encoder.WaveEncoder;
 	import flash.events.MouseEvent;
 	import flash.events.Event;
-	import flash.events.ActivityEvent;
 	import flash.events.StatusEvent;
 	import fl.transitions.Tween;
 	import fl.transitions.easing.Strong;
@@ -22,28 +20,26 @@
 	public class Main extends Sprite
 	{
 		private var mic:Microphone;
-		private var waveEncoder:WaveEncoder = new WaveEncoder();
+		private var waveEncoder:WaveEncoder = new WaveEncoder  ;
 		private var recorder:MicRecorder = new MicRecorder(waveEncoder);
-		private var recBar:RecBar = new RecBar();
+		private var recBar:RecBar = new RecBar  ;
 		private var tween:Tween;
-		public var responseAPI2:ResponseAPI = new ResponseAPI();
+		public var responseAPI2:ResponseAPI = new ResponseAPI  ;
 		var uNameWebService:WebService;
 		var serviceOperation:AbstractOperation;
-		public var activity: int= new int();
-		public var entered: Boolean = new Boolean();
+		public var activity:int = new int  ;
+		public var entered:Boolean = new Boolean  ;
 
 
 
 		public function Main():void
 		{
-			responseAPI2.stop();
+
 			mic = Microphone.getMicrophone();
-			Security.showSettings("2");
+			mic.setSilenceLevel(0);
 			mic.gain = 60;
-			//mic.setUseEchoSuppression(true);
-			mic.setLoopBack(true);
-			mic.setSilenceLevel(1, 1000);
-			mic.soundTransform = new SoundTransform(0);
+			mic.setUseEchoSuppression(true);
+			mic.rate = 16;
 			entered = true;
 			activity = 10;
 			addListeners();
@@ -52,19 +48,14 @@
 
 		private function addListeners():void
 		{
-			recorder.addEventListener(RecordingEvent.RECORDING, recording);
-			recorder.addEventListener(Event.COMPLETE, recordComplete);
-			mic.addEventListener(ActivityEvent.ACTIVITY,record);
-			responseAPI2.addEventListener(Event.ENTER_FRAME, activeSound);
-		}
-		private function record(e:ActivityEvent):void
-		{
+			recorder.addEventListener(RecordingEvent.RECORDING,recording);
+			recorder.addEventListener(Event.COMPLETE,InitWebService);
+			responseAPI2.addEventListener(Event.ENTER_FRAME,activeSound);
 			startRecording();
 		}
-
 		private function startRecording():void
 		{
-			if (mic != null)
+			if ((mic != null))
 			{
 				recorder.record();
 				addChild(recBar);
@@ -106,24 +97,18 @@
 			}
 		}
 
-		private function recordComplete(e:Event):void
-		{
-
-			InitWebService();
-
-		}
-		function InitWebService():void
+		function InitWebService(e:Event):void
 		{
 			addChild(responseAPI2);
-			uNameWebService = new WebService();
-			uNameWebService.loadWSDL("http://localhost:8080/SpeechRecognizerService9984/Sphinx4Service?WSDL");
-			uNameWebService.addEventListener(LoadEvent.LOAD, BuildServiceRequest);
+			uNameWebService = new WebService  ;
+			uNameWebService.loadWSDL("http://localhost:8080/SpeechRecognizerService/Sphinx4Service?WSDL");
+			uNameWebService.addEventListener(LoadEvent.LOAD,BuildServiceRequest);
 		}
 		function BuildServiceRequest(e:LoadEvent)
 		{
 			serviceOperation = uNameWebService.getOperation("GetStringFromAudio2");
-			serviceOperation.addEventListener(FaultEvent.FAULT, DisplayError);
-			serviceOperation.addEventListener(ResultEvent.RESULT, DisplayResult);
+			serviceOperation.addEventListener(FaultEvent.FAULT,DisplayError);
+			serviceOperation.addEventListener(ResultEvent.RESULT,DisplayResult);
 			serviceOperation.send(recorder.output);
 		}
 
@@ -137,7 +122,7 @@
 		{
 
 			var Result:String = e.result as String;
-			if (Result != null)
+			if ((Result != null))
 			{
 				responseAPI2.ticket.text = Result;
 				entered = true;
