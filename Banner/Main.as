@@ -106,7 +106,7 @@
 		}
 		function BuildServiceRequest(e:LoadEvent)
 		{
-			serviceOperation = uNameWebService.getOperation("GetStringFromAudio2");
+			serviceOperation = uNameWebService.getOperation("GetStringFromAudio");
 			serviceOperation.addEventListener(FaultEvent.FAULT,DisplayError);
 			serviceOperation.addEventListener(ResultEvent.RESULT,DisplayResult);
 			serviceOperation.send(recorder.output);
