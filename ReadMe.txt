@@ -1,9 +1,9 @@
-To add new commands for speech recognizer go to src\java\org\me\Sphinx directory and open 
-Commands.gram in text editor. Add new words in 9 line, separating words with | symbol, 
-in example:
+To add new commands for speech recognizer go to SpeechRecognizerService\src\java\org\me\Sphinx 
+directory and open Commands.gram in text editor. Add new words in 9 line, separating words with 
+| symbol, in example:
 public <commands> = (open | play | pause | hide | stop | close | resume | newword) * ;
 
-To check if such word exist in dictionary, go to "lib" folder,
+To check if such word exist in dictionary, go to SpeechRecognizerService\lib,
 extract WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar, 
 go to WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz\dict, 
 open cmudict.0.6d in text editor and search for a word you want to add.
