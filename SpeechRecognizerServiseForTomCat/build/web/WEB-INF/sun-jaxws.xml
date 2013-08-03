@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoints version="2.0" xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime">
+  <endpoint implementation="Sphinx.Sphinx4Service" name="Sphinx4Service" url-pattern="/Sphinx4Service"/>
+</endpoints>
