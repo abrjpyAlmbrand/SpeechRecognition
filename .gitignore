@@ -147,9 +147,16 @@ $RECYCLE.BIN/
 # Mac crap
 .DS_Store
 
+#java specific
 *.class
 
-# Package Files #
-*.jar
-*.war
-*.ear
+#netbeans ignore personal stuff 
+nbproject/private/
+
+
+## generic files to ignore
+*~
+*.lock
+*.DS_Store
+*.swp
+*.out
