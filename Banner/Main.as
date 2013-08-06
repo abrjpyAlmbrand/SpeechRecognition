@@ -3,6 +3,7 @@
 	import flash.display.Sprite;
 	import flash.media.Microphone;
 	import flash.system.Security;
+	import flash.utils.*;
 	import org.bytearray.micrecorder.*;
 	import org.bytearray.micrecorder.events.RecordingEvent;
 	import org.bytearray.micrecorder.encoder.WaveEncoder;
@@ -22,8 +23,6 @@
 		private var mic:Microphone;
 		private var waveEncoder:WaveEncoder = new WaveEncoder  ;
 		private var recorder:MicRecorder = new MicRecorder(waveEncoder);
-		private var recBar:RecBar = new RecBar  ;
-		private var tween:Tween;
 		public var responseAPI2:ResponseAPI = new ResponseAPI  ;
 		var uNameWebService:WebService;
 		var serviceOperation:AbstractOperation;
@@ -58,8 +57,6 @@
 			if ((mic != null))
 			{
 				recorder.record();
-				addChild(recBar);
-				tween = new Tween(recBar,"y",Strong.easeOut, -  recBar.height,0,1,true);
 			}
 		}
 		private function activeSound(e:Event):void
@@ -69,39 +66,32 @@
 				activity = mic.activityLevel;
 				entered = false;
 			}
-			if (mic.activityLevel < 8 && entered == false)
+			if (mic.activityLevel < 20 && entered == false)
 			{
 				entered = true;
-				stopRecording();
+				var intervalId:uint = setTimeout(stopRecording, 700);
 			}
 		}
 		private function stopRecording():void
 		{
 			recorder.stop();
-			tween = new Tween(recBar,"y",Strong.easeOut,0, -  recBar.height,1,true);
+			rec.txt.text = "...";
+			addChild(rec);
+
 
 		}
 
 		private function recording(e:RecordingEvent):void
 		{
-			var currentTime:int = Math.floor(e.time / 1000);
-			recBar.counter.text = String(currentTime);
-
-			if (String(currentTime).length == 1)
-			{
-				recBar.counter.text = "00:0" + currentTime;
-			}
-			else if (String(currentTime).length == 2)
-			{
-				recBar.counter.text = "00:" + currentTime;
-			}
+			rec.txt.text = "Recording...";
+			addChild(rec);
 		}
 
 		function InitWebService(e:Event):void
 		{
 			addChild(responseAPI2);
 			uNameWebService = new WebService  ;
-			uNameWebService.loadWSDL("http://localhost:8080/SpeechRecognizerService/Sphinx4Service?WSDL");
+			uNameWebService.loadWSDL("http://fe531b79fb5842daacdcfbaa0c39104a.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
 			uNameWebService.addEventListener(LoadEvent.LOAD,BuildServiceRequest);
 		}
 		function BuildServiceRequest(e:LoadEvent)
