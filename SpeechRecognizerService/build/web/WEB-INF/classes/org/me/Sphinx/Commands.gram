@@ -1,9 +1,0 @@
-#JSGF V1.0;
-
-/**
- * JSGF Commands Grammar for Hello World example
- */
-
-grammar Commands;
-
-public <commands> = (open | play | pause | hide | stop | close | resume) * ;

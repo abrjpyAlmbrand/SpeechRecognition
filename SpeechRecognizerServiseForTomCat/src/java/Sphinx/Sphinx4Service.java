@@ -18,9 +18,9 @@ import java.io.FileOutputStream;
 @WebService(serviceName = "Sphinx4Service")
 public class Sphinx4Service {
 
-    /**-----------------------------------------------------------------------
-     * Get string type text from Audio file (Audio file transmit through parameters)
-     -----------------------------------------------------------------------*/
+    /**----------------------------------------------------------------------
+     * Returns string type text from byte array
+     ----------------------------------------------------------------------*/
     @WebMethod(operationName = "GetStringFromAudio")
     public String GetStringFromAudio(@WebParam(name = "ByteStream") byte[] ByteStream) {
         String Text;
@@ -41,7 +41,9 @@ public class Sphinx4Service {
         else
             return "null";
     }
-    
+    /**------------------------------------------------------------------------
+     * Sphinx4 logic
+     ------------------------------------------------------------------------*/    
     public class Transcriber {
         
         public String Recognise(File AudioFile) throws IOException, UnsupportedAudioFileException {
@@ -62,18 +64,20 @@ public class Sphinx4Service {
             return stringline;
         }
     }
-    
+    /**------------------------------------------------------------------------
+     * Converts byte array to audio file
+     ------------------------------------------------------------------------*/    
     private File frombytes(byte[] bytesarray)       
     {
-        File someFile = new File("AudioFile");
+        File AudioFile = new File("AudioFile");
         try
         {
-            FileOutputStream fos = new FileOutputStream(someFile);
+            FileOutputStream fos = new FileOutputStream(AudioFile);
             fos.write(bytesarray);  
         }
         catch(Exception e)
         {
         }        
-        return someFile;
+        return AudioFile;
     }
 }
