@@ -19,17 +19,23 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 @WebService(serviceName = "Sphinx4Service")
 public class Sphinx4Service {
-
+    //initializing the logger
+    static Logger log = Logger.getLogger(Sphinx4Service.class.getName());
     /**----------------------------------------------------------------------
      * Returns string type text from byte array
      ----------------------------------------------------------------------*/
     @WebMethod(operationName = "GetStringFromAudio")
     public String GetStringFromAudio(@WebParam(name = "ByteStream") byte[] ByteStream) {
+        log.trace("This is a Trace");
+        log.debug("This is a Debug");
+        log.info("This is an Info");
+        log.warn("This is a Warn");
+        log.error("This is an Error");
+        log.fatal("This is a Fatal");
         String Text;
         Sphinx4Service.Transcriber newMethod = new Sphinx4Service.Transcriber();
         if (ByteStream!=null)
@@ -123,12 +129,9 @@ public class Sphinx4Service {
        return aaa;
           
       }
-      catch (Exception ee){
+      catch (Exception ee)
+      {
           return ee.toString();
-      }
-                      
-
-}
-
-
+      }                      
+    }
 }

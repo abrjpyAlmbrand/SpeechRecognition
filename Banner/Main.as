@@ -91,7 +91,7 @@
 		{
 			addChild(responseAPI2);
 			uNameWebService = new WebService  ;
-			uNameWebService.loadWSDL("http://fe531b79fb5842daacdcfbaa0c39104a.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
+			uNameWebService.loadWSDL("http://localhost:8080/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
 			uNameWebService.addEventListener(LoadEvent.LOAD,BuildServiceRequest);
 		}
 		function BuildServiceRequest(e:LoadEvent)
