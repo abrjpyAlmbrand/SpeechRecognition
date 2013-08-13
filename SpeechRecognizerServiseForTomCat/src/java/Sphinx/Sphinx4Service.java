@@ -121,7 +121,7 @@ public class Sphinx4Service {
       connection.setDoInput(true);
       connection.setInstanceFollowRedirects(false); 
       connection.setRequestMethod("POST"); 
-      connection.setRequestProperty("Content-Type", "audio/x-flac; rate=44000"); 
+      connection.setRequestProperty("Content-Type", "audio/x-flac; rate=16000"); 
       connection.setRequestProperty("User-Agent", "speech2text"); 
       connection.setConnectTimeout(60000);
       connection.setUseCaches (false);
