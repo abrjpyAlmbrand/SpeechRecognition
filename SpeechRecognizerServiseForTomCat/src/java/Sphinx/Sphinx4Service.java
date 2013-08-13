@@ -19,6 +19,11 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
+import java.util.Random;
+import java.util.logging.Level;
+import net.sourceforge.javajson.JsonArray;
+import net.sourceforge.javajson.JsonException;
+import net.sourceforge.javajson.JsonObject;
 import org.apache.log4j.Logger;
 
 @WebService(serviceName = "Sphinx4Service")
@@ -53,7 +58,12 @@ public class Sphinx4Service {
         }
         else
             return "null";
+        
+        
     }
+    
+    
+    
     /**------------------------------------------------------------------------
      * Sphinx4 logic
      ------------------------------------------------------------------------*/    
@@ -111,7 +121,7 @@ public class Sphinx4Service {
       connection.setDoInput(true);
       connection.setInstanceFollowRedirects(false); 
       connection.setRequestMethod("POST"); 
-      connection.setRequestProperty("Content-Type", "audio/x-flac; rate=16000"); 
+      connection.setRequestProperty("Content-Type", "audio/x-flac; rate=44000"); 
       connection.setRequestProperty("User-Agent", "speech2text"); 
       connection.setConnectTimeout(60000);
       connection.setUseCaches (false);
@@ -122,16 +132,36 @@ public class Sphinx4Service {
        connection.disconnect();
        BufferedReader in = new BufferedReader( new InputStreamReader(connection.getInputStream()));
        String decodedString;  
-       String aaa = "";
+       String answer = "";
        while ((decodedString = in.readLine()) != null) {
-		aaa += decodedString;
+		answer += decodedString;
        }
-       return aaa;
+       String msg = JsonParser(answer);
+       log.info("Google response: " + msg);
+       return msg;
           
       }
       catch (Exception ee)
       {
           return ee.toString();
       }                      
+    }
+
+    private String JsonParser(String request)
+    {
+        String message;
+        Random randomGenerator = new Random();
+        try {
+            log.info("JSON: " + request);
+            JsonObject json = JsonObject.parse(request);
+            JsonArray hyphypothesesArray = json.getJsonArray("hypotheses");
+            JsonObject arrayElementWithAnswer= hyphypothesesArray.getJsonObject(0);
+            message = arrayElementWithAnswer.getString("utterance");
+            
+        } catch (Exception ex) {
+            log.error("This is an Error: " + ex.toString());
+            message = "Please try again. " + randomGenerator.nextInt(100);
+        }
+        return message;
     }
 }
