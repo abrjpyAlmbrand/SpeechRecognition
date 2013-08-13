@@ -18,11 +18,8 @@ import java.net.URL;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.ProtocolException;
 import java.util.Random;
-import java.util.logging.Level;
 import net.sourceforge.javajson.JsonArray;
-import net.sourceforge.javajson.JsonException;
 import net.sourceforge.javajson.JsonObject;
 import org.apache.log4j.Logger;
 
@@ -35,12 +32,6 @@ public class Sphinx4Service {
      ----------------------------------------------------------------------*/
     @WebMethod(operationName = "GetStringFromAudio")
     public String GetStringFromAudio(@WebParam(name = "ByteStream") byte[] ByteStream) {
-        log.trace("This is a Trace");
-        log.debug("This is a Debug");
-        log.info("This is an Info");
-        log.warn("This is a Warn");
-        log.error("This is an Error");
-        log.fatal("This is a Fatal");
         String Text;
         Sphinx4Service.Transcriber newMethod = new Sphinx4Service.Transcriber();
         if (ByteStream!=null)
@@ -53,17 +44,14 @@ public class Sphinx4Service {
             catch(Exception e)
             {
                 Text=e.toString();
+                log.error("This is an Error: " + e.toString());
             }       
             return Text;
         }
         else
-            return "null";
-        
-        
-    }
-    
-    
-    
+            log.info("Byte array is empty, you need to send ByteStream in order to get result");
+            return "null";    
+    }          
     /**------------------------------------------------------------------------
      * Sphinx4 logic
      ------------------------------------------------------------------------*/    
@@ -84,6 +72,7 @@ public class Sphinx4Service {
             while ((result = recognizer.recognize())!= null) {
                     stringline = stringline + result.getBestResultNoFiller() + ' ';
             }
+            log.info("Sphinx response: " + stringline);
             return stringline;
         }
     }
@@ -100,11 +89,10 @@ public class Sphinx4Service {
         }
         catch(Exception e)
         {
+            log.error("Error converting byte array to file: " + e.toString());
         }        
         return AudioFile;
     }
-
-
 /*
  * 
  * Google Speech api

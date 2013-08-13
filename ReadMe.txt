@@ -15,3 +15,18 @@ guide: http://www.youtube.com/watch?v=7YdE-VpVchw.
 To get different language models go here: http://sourceforge.net/projects/cmusphinx/files/Acoustic%20and%20Language%20Models/
 
 You can find more information about sphinx voice recognition http://cmusphinx.sourceforge.net/
+
+Existing commands:
+Close, hide, open, pause, play, resume, stop.
+
+Spelling:
+CLOSE                K L OW S
+CLOSE(2)             K L OW Z
+HIDE                 HH AY D
+OPEN                 OW P AH N
+PAUSE                P AO Z
+PLAY                 P L EY
+RESUME               R EH Z AH M EY
+RESUME(2)            R IH Z UW M
+RESUME(3)            R IY Z UW M
+STOP                 S T AA P
