@@ -63,7 +63,7 @@
 			mic.setSilenceLevel(0);
 			mic.gain = 60;
 			mic.setUseEchoSuppression(true);
-			mic.rate = 44;
+			mic.rate = 16;
 			entered = true;
 			activity = 10;
 			addListeners();
@@ -124,6 +124,7 @@
 				startRecording();
 			}
 			recordTime = e.time;
+			playbtn.visible = false;
 		}
 
 		function InitSphinxService():void
