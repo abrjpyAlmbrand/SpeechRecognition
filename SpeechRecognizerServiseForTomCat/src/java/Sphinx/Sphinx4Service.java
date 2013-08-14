@@ -125,9 +125,20 @@ public class Sphinx4Service {
 		answer += decodedString;
        }
        String msg = JsonParser(answer);
+       if (isAnswerValid(msg) == true)
+       {
        log.info("Google response: " + msg);
-       return msg;
-          
+      //return msg;
+       }
+       else 
+       {
+       //log.info("I don't know this command: " + msg);
+       //return "I don't know this command " + msg;
+       //msg = msg +
+         msg = "Unknown command, please try again."; 
+         log.info("Google response: " + msg);
+       }
+       return msg; 
       }
       catch (Exception ee)
       {
@@ -137,8 +148,7 @@ public class Sphinx4Service {
 
     private String JsonParser(String request)
     {
-        String message;
-        Random randomGenerator = new Random();
+        String message;        
         try {
             log.info("JSON: " + request);
             JsonObject json = JsonObject.parse(request);
@@ -147,9 +157,23 @@ public class Sphinx4Service {
             message = arrayElementWithAnswer.getString("utterance");
             
         } catch (Exception ex) {
+            
             log.error("This is an Error: " + ex.toString());
-            message = "Please try again. " + randomGenerator.nextInt(100);
+            message = "Please try again. ";
         }
         return message;
+    }
+    
+    private boolean isAnswerValid(String messageToCheck)
+    {
+      boolean isValid = false;
+      String [] commands = {"open", "close", "play", "pause", "stop", "resume", "hide" };
+      for (String item : commands) {
+            if (messageToCheck.equalsIgnoreCase(item)) {
+            isValid = true;
+            break; 
+         }     
+    }     
+      return isValid;  
     }
 }
