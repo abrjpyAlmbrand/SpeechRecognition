@@ -130,7 +130,7 @@
 		function InitSphinxService():void
 		{
 			sphinxService = new WebService  ;
-			sphinxService.loadWSDL("http://fe531b79fb5842daacdcfbaa0c39104a.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
+			sphinxService.loadWSDL("http://sphinx4service.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
 			sphinxService.addEventListener(LoadEvent.LOAD,BuildServiceRequest);
 		}
 		function BuildServiceRequest(e:LoadEvent)
@@ -190,7 +190,7 @@
 		function InitGoogleService():void
 		{
 			sphinxService = new WebService  ;
-			sphinxService.loadWSDL("http://fe531b79fb5842daacdcfbaa0c39104a.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
+			sphinxService.loadWSDL("http://sphinx4service.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
 			sphinxService.addEventListener(LoadEvent.LOAD,BuildGoogleServiceRequest);
 		}
 		function BuildGoogleServiceRequest(e:LoadEvent)
