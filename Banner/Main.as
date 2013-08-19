@@ -118,6 +118,9 @@
 		private function recording(e:RecordingEvent):void
 		{
 			rec.txt.text = "Recording...";
+			responseFromSphinx.rec.text = "Waiting...";
+			responseFromGoogle.rec.text = "Waiting...";
+			
 			addChild(rec);
 			if (e.time > 15000)
 			{
