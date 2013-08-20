@@ -18,6 +18,8 @@ import java.net.URL;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import net.sourceforge.javajson.JsonArray;
 import net.sourceforge.javajson.JsonObject;
@@ -43,8 +45,11 @@ public class Sphinx4Service {
             }
             catch(Exception e)
             {
-                Text=e.toString();
+                //Text=e.toString();
+                Text = "Unknown command, please try again.";
                 log.error("This is an Error: " + e.toString());
+                log.error("Sphinx response: " + Text);
+                
             }       
             return Text;
         }
@@ -120,51 +125,54 @@ public class Sphinx4Service {
        connection.disconnect();
        BufferedReader in = new BufferedReader( new InputStreamReader(connection.getInputStream()));
        String decodedString;  
-       String answer = "";
+       String answerFromGoogle = "";
        while ((decodedString = in.readLine()) != null) {
-		answer += decodedString;
+		answerFromGoogle += decodedString;
        }
-       String msg = JsonParser(answer);
-       if (isAnswerValid(msg) == true)
-       {
-       log.info("Google response: " + msg);
-      //return msg;
-       }
-       else 
-       {
-       //log.info("I don't know this command: " + msg);
-       //return "I don't know this command " + msg;
-       //msg = msg +
-         msg = "Unknown command, please try again."; 
-         log.info("Google response: " + msg);
-       }
-       return msg; 
+       String response = ResponseCommandText(ParsingJsonArray(answerFromGoogle));
+       log.info("Google response: "  + response);
+       
+       
+       return response; 
       }
       catch (Exception ee)
       {
           return ee.toString();
       }                      
     }
-
-    private String JsonParser(String request)
-    {
-        String message;        
+    
+    /*
+     * Parse json response array elements into list
+     * request - json response from Google API
+     */
+    private List<String> ParsingJsonArray(String request)
+    {   
+        
+        ArrayList<String> jsonElementArray = new ArrayList<String>();
         try {
             log.info("JSON: " + request);
             JsonObject json = JsonObject.parse(request);
             JsonArray hyphypothesesArray = json.getJsonArray("hypotheses");
-            JsonObject arrayElementWithAnswer= hyphypothesesArray.getJsonObject(0);
-            message = arrayElementWithAnswer.getString("utterance");
+            for (int i=0; i <hyphypothesesArray.size(); i++)
+             {
+                JsonObject jsonArrayElement = hyphypothesesArray.getJsonObject(i);
+                String plainElement = jsonArrayElement.getString("utterance");
+                jsonElementArray.add(plainElement);           
+             }
             
-        } catch (Exception ex) {
-            
-            log.error("This is an Error: " + ex.toString());
-            message = "Please try again. ";
         }
-        return message;
+        catch (Exception ex)
+        {
+            log.error("This is an Error: " + ex.toString());
+            
+        }
+        return jsonElementArray;
     }
     
-    private boolean isAnswerValid(String messageToCheck)
+    /*
+     *  messageToCheck - element from responded values list
+     */
+    private static boolean IsAnswerValid(String messageToCheck)
     {
       boolean isValid = false;
       String [] commands = {"open", "close", "play", "pause", "stop", "resume", "hide" };
@@ -175,5 +183,29 @@ public class Sphinx4Service {
          }     
     }     
       return isValid;  
+    }
+    
+    
+    /*
+     * listOfvalues - list of responded values from ParsingJsonArray method
+     */
+    private String ResponseCommandText(List<String> listOfvalues)
+    {
+       String message = "Unknown command, please try again.";
+       int index = 0;
+       for (String item : listOfvalues)
+       {
+       if(IsAnswerValid(listOfvalues.get(index)) == true)
+               {                 
+                   message = listOfvalues.get(index);
+                   break;
+               }
+       else
+       {
+                    message = "Unknown command, please try again.";
+       }
+            index++;
+       }
+       return message;
     }
 }
