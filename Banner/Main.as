@@ -20,6 +20,8 @@
 	import mx.rpc.AbstractOperation;
 	import cmodule.flac.CLibInit;
 
+	//for debug in console
+	import flash.external.ExternalInterface;
 
 	public class Main extends Sprite
 	{
@@ -55,17 +57,29 @@
 		var recordTime:int;
 
 		var timer:uint;
-
+		var noiseLvl:int = new int;
+		
+		//For debug in browser  console
+		var debug:Boolean = true;
+		
 		public function Main():void
 		{
+			noiseLvlLabel.visible = false;
+			inputas.visible = false;
+			updateBtn.visible = false;
 			playbtn.visible = false;
+			playStartStopbtn.visible = false;
+			stopBtn.visible = false;
+			startBtn.visible = false;
 			mic = Microphone.getMicrophone();
 			mic.setSilenceLevel(0);
 			mic.gain = 60;
 			mic.setUseEchoSuppression(true);
 			mic.rate = 16;
 			entered = true;
-			activity = 10;
+			activity = 10;	
+			noiseLvl = 8;
+			inputas.text = String(8);
 			addListeners();
 		}
 
@@ -73,9 +87,88 @@
 		{
 			recorder.addEventListener(RecordingEvent.RECORDING,recording);
 			recorder.addEventListener(Event.COMPLETE,sendRequests);
-			responseFromSphinx.addEventListener(Event.ENTER_FRAME,activeSound);
-			startRecording();
+			//responseFromSphinx.addEventListener(Event.ENTER_FRAME,activeSound);
+			withPlaybtn.addEventListener(MouseEvent.CLICK, RecordingWithPlayButton);
+			
+			startStopBtn.addEventListener(MouseEvent.CLICK, StartStopStarts);
+			startBtn.addEventListener(MouseEvent.CLICK, StartButtonActions);
+			stopBtn.addEventListener(MouseEvent.CLICK, StopButtonActions);
+			playStartStopbtn.addEventListener(MouseEvent.CLICK, onPlay1);
+			updateBtn.addEventListener(MouseEvent.CLICK, UpdateNoiseLvl);
 		}
+		
+		//for debug in browser  console
+		function log(msg:String):void {
+			if ( debug ) {
+				trace(msg);
+				ExternalInterface.call('console.log',msg);
+			}
+		}
+		function UpdateNoiseLvl(evt:MouseEvent=null):void 
+		{
+			noiseLvl = int(inputas.text);
+			//trace("noiseLvl " + noiseLvl);
+			//trace("progress " + progress);
+			//trace(noiseLvl);
+			log("Noise lvl updated: " + String(noiseLvl));			
+		}
+		
+		//Start/Stop method starts
+		function StartStopStarts(evt:MouseEvent=null):void
+		{
+			withPlaybtn.visible = false;
+			startStopBtn.visible = false;
+			stopBtn.visible = false;
+			startBtn.visible = true;
+			
+
+		}
+		
+		//Start button
+		function StartButtonActions(evt:MouseEvent=null):void
+		{
+			playStartStopbtn.visible = false;
+			startBtn.visible = false;
+			stopBtn.visible = true;
+			startRecording();
+			responseFromSphinx.rec.visible = false;
+			responseFromGoogle.rec.visible = false;
+			
+		}
+		
+		//Stop button
+		function StopButtonActions(evt:MouseEvent=null):void
+		{
+			stopBtn.visible = false;
+			startBtn.visible = true;
+			stopRecording();
+			playbtn.visible = false;
+			playStartStopbtn.visible = true;
+			responseFromSphinx.rec.visible = true;
+			responseFromGoogle.rec.visible = true;
+			
+		}
+		//Play audio recorded  in Start/stop method
+		function onPlay1(evt:MouseEvent=null):void
+		{
+			player = new WavSound(recorder.output);
+			channel = player.play();			
+		}
+		
+		//Old method start
+		//Method  then  every new record  starts after  you listen previous recorded audio. (play button)
+		function RecordingWithPlayButton(evt:MouseEvent=null):void
+		{
+			noiseLvlLabel.visible = true;
+			inputas.visible = true;
+			updateBtn.visible = true;
+			startRecording();
+			responseFromSphinx.addEventListener(Event.ENTER_FRAME,activeSound);
+			withPlaybtn.visible = false;
+			startStopBtn.visible = false;
+
+		}
+		
 		private function startRecording():void
 		{
 			if ((mic != null))
@@ -92,18 +185,23 @@
 				activity = mic.activityLevel;
 				entered = false;
 			}
-			if (mic.activityLevel < 8 && entered == false)
+			//if (mic.activityLevel < 8 && entered == false)
+			if (mic.activityLevel < noiseLvl && entered == false)
 			{
 				entered = true;
 				timer = setTimeout(stopRecording,1500);
 			}
+			//trace("activeSound method, curent noise lvl: " + noiseLvl);
+			log("activeSound method, current noise lvl: " + String(noiseLvl));
 		}
+		
 		private function stopRecording():void
 		{
 			recorder.stop();
 			rec.txt.text = "...";
 			addChild(rec);
 		}
+		
 		function sendRequests(e:Event):void
 		{
 			if (entered == true)
@@ -134,6 +232,7 @@
 		{
 			sphinxService = new WebService  ;
 			sphinxService.loadWSDL("http://sphinx4service.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
+			//sphinxService.loadWSDL("http://localhost:8080/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
 			sphinxService.addEventListener(LoadEvent.LOAD,BuildServiceRequest);
 		}
 		function BuildServiceRequest(e:LoadEvent)
@@ -175,12 +274,14 @@
 			channel.addEventListener(Event.SOUND_COMPLETE ,RestartRecordinge);
 
 		}
+		
 		function RestartRecordinge(e:Event)
 		{
 			rec.txt.text = "Playing...";
 			addChild(rec);
 			timer = setTimeout(startRecording,recordTime + 1000);
 		}
+		
 		function EncoderForGoogle():void
 		{
 			var flacCodec:Object;
@@ -194,6 +295,7 @@
 		{
 			sphinxService = new WebService  ;
 			sphinxService.loadWSDL("http://sphinx4service.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
+			//sphinxService.loadWSDL("http://localhost:8080/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
 			sphinxService.addEventListener(LoadEvent.LOAD,BuildGoogleServiceRequest);
 		}
 		function BuildGoogleServiceRequest(e:LoadEvent)
