@@ -60,12 +60,14 @@
 		var noiseLvl:int = new int;
 		
 		//For debug in browser  console
+		//true - debug enabled
+		//false - disabled
 		var debug:Boolean = true;
 		
 		public function Main():void
 		{
 			noiseLvlLabel.visible = false;
-			inputas.visible = false;
+			inputForNoiselvl.visible = false;
 			updateBtn.visible = false;
 			playbtn.visible = false;
 			playStartStopbtn.visible = false;
@@ -79,7 +81,7 @@
 			entered = true;
 			activity = 10;	
 			noiseLvl = 8;
-			inputas.text = String(8);
+			inputForNoiselvl.text = String(8);
 			addListeners();
 		}
 
@@ -87,7 +89,6 @@
 		{
 			recorder.addEventListener(RecordingEvent.RECORDING,recording);
 			recorder.addEventListener(Event.COMPLETE,sendRequests);
-			//responseFromSphinx.addEventListener(Event.ENTER_FRAME,activeSound);
 			withPlaybtn.addEventListener(MouseEvent.CLICK, RecordingWithPlayButton);
 			
 			startStopBtn.addEventListener(MouseEvent.CLICK, StartStopStarts);
@@ -106,10 +107,7 @@
 		}
 		function UpdateNoiseLvl(evt:MouseEvent=null):void 
 		{
-			noiseLvl = int(inputas.text);
-			//trace("noiseLvl " + noiseLvl);
-			//trace("progress " + progress);
-			//trace(noiseLvl);
+			noiseLvl = int(inputForNoiselvl.text);
 			log("Noise lvl updated: " + String(noiseLvl));			
 		}
 		
@@ -160,7 +158,7 @@
 		function RecordingWithPlayButton(evt:MouseEvent=null):void
 		{
 			noiseLvlLabel.visible = true;
-			inputas.visible = true;
+			inputForNoiselvl.visible = true;
 			updateBtn.visible = true;
 			startRecording();
 			responseFromSphinx.addEventListener(Event.ENTER_FRAME,activeSound);
@@ -185,13 +183,12 @@
 				activity = mic.activityLevel;
 				entered = false;
 			}
-			//if (mic.activityLevel < 8 && entered == false)
+
 			if (mic.activityLevel < noiseLvl && entered == false)
 			{
 				entered = true;
 				timer = setTimeout(stopRecording,1500);
 			}
-			//trace("activeSound method, curent noise lvl: " + noiseLvl);
 			log("activeSound method, current noise lvl: " + String(noiseLvl));
 		}
 		
@@ -232,7 +229,6 @@
 		{
 			sphinxService = new WebService  ;
 			sphinxService.loadWSDL("http://sphinx4service.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
-			//sphinxService.loadWSDL("http://localhost:8080/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
 			sphinxService.addEventListener(LoadEvent.LOAD,BuildServiceRequest);
 		}
 		function BuildServiceRequest(e:LoadEvent)
@@ -295,7 +291,6 @@
 		{
 			sphinxService = new WebService  ;
 			sphinxService.loadWSDL("http://sphinx4service.cloudapp.net/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
-			//sphinxService.loadWSDL("http://localhost:8080/SpeechRecognizerServiseForTomCat/Sphinx4Service?wsdl");
 			sphinxService.addEventListener(LoadEvent.LOAD,BuildGoogleServiceRequest);
 		}
 		function BuildGoogleServiceRequest(e:LoadEvent)
